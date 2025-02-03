@@ -1,0 +1,29 @@
+name: k8s-dbi-mysql
+services:
+  mysql:
+    image: mysql:9.2
+    container_name: k8s-dbi-mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: abcd1234
+      MYSQL_DATABASE: demo
+  k8s-dbi:
+    container_name: k8s-dbi-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: khacdatdo/k8s-dbi:mysql
+    environment:
+      DB_HOST: k8s-dbi-mysql-db
+      DB_USER: root
+      DB_PASS: abcd1234
+      DB_NAME: demo
+      BACKUP_PASSWORD: changeme
+      S3_URL: https://s3.example.com
+      ACCESS_KEY: access_key_example
+      SECRET_KEY: secret_key_example
+      S3_BUCKET: example_bucket
+      S3_PATH: demo
+    volumes:
+      - ./.data:/backup
+    depends_on:
+      - mysql
